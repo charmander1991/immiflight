@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ImmiFlight — U.S. Immigration Fee Board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo-mark">✈</div>
+      <div class="logo-text">
+        <span class="logo-title">IMMIFLIGHT</span>
+        <span class="logo-sub">U.S. IMMIGRATION FEE DEPARTURES</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="clock-block">
+        <div class="clock-label">LOCAL TIME</div>
+        <div class="clock" id="clock">--:--:--</div>
+      </div>
+      <div class="clock-block">
+        <div class="clock-label">LAST DATA UPDATE</div>
+        <div class="clock" id="last-updated">LOADING</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- GATE TABS -->
+  <nav class="gate-nav">
+    <button class="gate-tab active" data-gate="A">GATE A · FAMILY</button>
+    <button class="gate-tab" data-gate="B">GATE B · EMPLOYMENT</button>
+    <button class="gate-tab" data-gate="C">GATE C · CITIZENSHIP</button>
+    <button class="gate-tab" data-gate="D">GATE D · STATE & ATTORNEY</button>
+  </nav>
+
+  <!-- BOARD CONTAINER -->
+  <main class="board-wrap">
+
+    <!-- COLUMN HEADERS -->
+    <div class="board-headers">
+      <div class="col-form">FORM</div>
+      <div class="col-desc">DESCRIPTION</div>
+      <div class="col-fee">FEE (USD)</div>
+      <div class="col-bio">BIOMETRICS</div>
+      <div class="col-status">STATUS</div>
+      <div class="col-notes">NOTES</div>
+    </div>
+
+    <!-- ROWS -->
+    <div class="board-rows" id="board-rows">
+      <!-- injected by app.js -->
+    </div>
+
+  </main>
+
+  <!-- TICKER -->
+  <footer class="ticker-wrap">
+    <div class="ticker-label">NOTICE</div>
+    <div class="ticker-track">
+      <div class="ticker-content" id="ticker-text">
+        FEES ARE SUBJECT TO CHANGE WITHOUT NOTICE &nbsp;·&nbsp;
+        ALWAYS VERIFY ON USCIS.GOV BEFORE FILING &nbsp;·&nbsp;
+        ATTORNEY COSTS ARE ESTIMATES ONLY &nbsp;·&nbsp;
+        BIOMETRICS FEE $85 APPLIES TO APPLICANTS AGED 14–78 &nbsp;·&nbsp;
+        FEE WAIVERS MAY BE AVAILABLE — CONSULT AN IMMIGRATION ATTORNEY &nbsp;·&nbsp;
+        DATA AUTO-REFRESHED WEEKLY VIA GITHUB ACTIONS &nbsp;·&nbsp;
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

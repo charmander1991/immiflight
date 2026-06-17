@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "last_updated": "2025-04-01",
+    "source": "https://www.uscis.gov/forms/filing-fees",
+    "note": "Auto-updated via GitHub Actions scraper"
+  },
+  "gates": {
+    "A": {
+      "label": "Family-Based",
+      "icon": "✈",
+      "forms": [
+        { "form": "I-130", "description": "Petition for Alien Relative", "fee": 675, "biometrics": 0, "status": "ON TIME", "notes": "Fee waiver available in some cases" },
+        { "form": "I-130A", "description": "Supplemental Info for Spouse Beneficiary", "fee": 0, "biometrics": 0, "status": "ON TIME", "notes": "Filed with I-130, no separate fee" },
+        { "form": "I-485", "description": "Application to Register Permanent Residence", "fee": 1440, "biometrics": 85, "status": "ON TIME", "notes": "Includes biometrics for applicants 14–78" },
+        { "form": "I-751", "description": "Petition to Remove Conditions on Residence", "fee": 595, "biometrics": 85, "status": "ON TIME", "notes": "For conditional green card holders" },
+        { "form": "I-864", "description": "Affidavit of Support", "fee": 0, "biometrics": 0, "status": "ON TIME", "notes": "No filing fee" },
+        { "form": "DS-260", "description": "Immigrant Visa Application (Consular)", "fee": 325, "biometrics": 0, "status": "ON TIME", "notes": "Paid to NVC, not USCIS" }
+      ]
+    },
+    "B": {
+      "label": "Work / Employment",
+      "icon": "⚡",
+      "forms": [
+        { "form": "I-140", "description": "Immigrant Petition for Alien Workers", "fee": 715, "biometrics": 0, "status": "ON TIME", "notes": "Premium processing available: +$2,805" },
+        { "form": "I-765", "description": "Application for Employment Authorization", "fee": 520, "biometrics": 0, "status": "ON TIME", "notes": "EAD — required for many adjustment cases" },
+        { "form": "I-539", "description": "Application to Extend/Change Nonimmigrant Status", "fee": 370, "biometrics": 85, "status": "ON TIME", "notes": "" },
+        { "form": "I-129", "description": "Petition for Nonimmigrant Worker (H/L/O/etc.)", "fee": 730, "biometrics": 0, "status": "ON TIME", "notes": "Varies by classification" },
+        { "form": "I-131", "description": "Application for Travel Document (Advance Parole)", "fee": 630, "biometrics": 85, "status": "ON TIME", "notes": "Required if traveling while I-485 pending" }
+      ]
+    },
+    "C": {
+      "label": "Citizenship & Status",
+      "icon": "★",
+      "forms": [
+        { "form": "N-400", "description": "Application for Naturalization", "fee": 760, "biometrics": 85, "status": "ON TIME", "notes": "Fee waiver available; reduced fee at $380 for low income" },
+        { "form": "N-600", "description": "Application for Certificate of Citizenship", "fee": 1170, "biometrics": 0, "status": "ON TIME", "notes": "" },
+        { "form": "I-90", "description": "Application to Replace Permanent Resident Card", "fee": 540, "biometrics": 85, "status": "ON TIME", "notes": "Green card replacement" },
+        { "form": "I-821D", "description": "Consideration of Deferred Action (DACA)", "fee": 0, "biometrics": 85, "status": "ON TIME", "notes": "Filing fee waived; biometrics still required" },
+        { "form": "I-589", "description": "Application for Asylum", "fee": 0, "biometrics": 0, "status": "ON TIME", "notes": "No filing fee" },
+        { "form": "I-693", "description": "Medical Examination (Civil Surgeon)", "fee": 0, "biometrics": 0, "status": "ON TIME", "notes": "Fee paid to civil surgeon, not USCIS (~$200–$500)" }
+      ]
+    },
+    "D": {
+      "label": "State & Attorney Costs",
+      "icon": "◎",
+      "forms": [
+        { "form": "ATT-FAM", "description": "Family-Based Immigration Attorney (avg)", "fee": 1500, "biometrics": 0, "status": "ESTIMATE", "notes": "Range: $1,000–$3,500 depending on complexity" },
+        { "form": "ATT-EMP", "description": "Employment-Based Immigration Attorney (avg)", "fee": 2500, "biometrics": 0, "status": "ESTIMATE", "notes": "Range: $1,500–$5,000+" },
+        { "form": "ATT-NAT", "description": "Naturalization Attorney (avg)", "fee": 800, "biometrics": 0, "status": "ESTIMATE", "notes": "Range: $500–$1,500" },
+        { "form": "TX-STATE", "description": "Texas — State Filing / Notary Costs (avg)", "fee": 45, "biometrics": 0, "status": "ESTIMATE", "notes": "Translation, notarization, certified copies" },
+        { "form": "OK-STATE", "description": "Oklahoma — State Filing / Notary Costs (avg)", "fee": 40, "biometrics": 0, "status": "ESTIMATE", "notes": "Translation, notarization, certified copies" },
+        { "form": "CA-STATE", "description": "California — State Filing / Notary Costs (avg)", "fee": 65, "biometrics": 0, "status": "ESTIMATE", "notes": "Higher cost of living reflects in legal service rates" }
+      ]
+    }
+  }
+}
