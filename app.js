@@ -125,7 +125,23 @@
           <span class="notes-text">${escHtml(item.notes || '')}</span>
         </div>
       </div>
+      <div class="cell col-add">
+        <div class="cell-inner" style="text-align:center">
+          <button class="add-to-manifest-btn" type="button" aria-label="Add to manifest">+</button>
+        </div>
+      </div>
     `;
+
+    const addBtn = row.querySelector('.add-to-manifest-btn');
+    addBtn.addEventListener('click', () => {
+      addToManifest(item);
+      addBtn.classList.add('added');
+      addBtn.textContent = '✓';
+      setTimeout(() => {
+        addBtn.classList.remove('added');
+        addBtn.textContent = '+';
+      }, 700);
+    });
 
     return row;
   }
@@ -161,6 +177,299 @@
       ` : ''}
     `;
     rows.appendChild(bar);
+  }
+
+  // ── Passenger Manifest (Case Builder) ──────────────────────
+  let manifestItems = [];
+  let manifestSeq = 0;
+
+  function addToManifest(item) {
+    manifestSeq++;
+    manifestItems.push({
+      id: manifestSeq,
+      form: item.form,
+      description: item.description,
+      fee: item.fee,
+      biometrics: item.biometrics || 0
+    });
+    renderManifest();
+  }
+
+  function removeFromManifest(id) {
+    manifestItems = manifestItems.filter(i => i.id !== id);
+    renderManifest();
+  }
+
+  function renderManifest() {
+    const list = document.getElementById('manifest-items');
+    if (!list) return;
+
+    if (manifestItems.length === 0) {
+      list.innerHTML = '<div class="manifest-empty">NO ITEMS BOARDED — SELECT + ON ANY ROW BELOW</div>';
+    } else {
+      list.innerHTML = '';
+      manifestItems.forEach(item => {
+        const total = item.fee + item.biometrics;
+        const row = document.createElement('div');
+        row.className = 'manifest-item';
+        row.innerHTML = `
+          <span>
+            <span class="manifest-item-name">${escHtml(item.form)}</span>
+            <span class="manifest-item-desc">${escHtml(item.description)}</span>
+          </span>
+          <span style="display:flex; align-items:center;">
+            <span class="manifest-item-amount">$${total.toLocaleString()}</span>
+            <button class="manifest-item-remove" type="button" aria-label="Remove">×</button>
+          </span>
+        `;
+        row.querySelector('.manifest-item-remove').addEventListener('click', () => removeFromManifest(item.id));
+        list.appendChild(row);
+      });
+    }
+
+    const filingSum = manifestItems.reduce((s, i) => s + i.fee, 0);
+    const bioSum = manifestItems.reduce((s, i) => s + i.biometrics, 0);
+
+    const elFiling = document.getElementById('manifest-sum-filing');
+    const elBio = document.getElementById('manifest-sum-bio');
+    const elTotal = document.getElementById('manifest-sum-total');
+    if (elFiling) elFiling.textContent = '$' + filingSum.toLocaleString();
+    if (elBio) elBio.textContent = '$' + bioSum.toLocaleString();
+    if (elTotal) elTotal.textContent = '$' + (filingSum + bioSum).toLocaleString();
+  }
+
+  function initManifestControls() {
+    const clearBtn = document.getElementById('manifest-clear');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        manifestItems = [];
+        renderManifest();
+      });
+    }
+  }
+
+  // ── Case Intake (guided question flow) ─────────────────────
+  // Maps answers to a set of {gate, form} lookups against the live feeData,
+  // so fee amounts always stay in sync with fees.json / SEED_DATA.
+  let intakePath = null;
+  let intakeAnswers = {};
+
+  function lookupForm(gateKey, formCode) {
+    if (!feeData || !feeData.gates[gateKey]) return null;
+    return feeData.gates[gateKey].forms.find(f => f.form === formCode) || null;
+  }
+
+  function initIntake() {
+    document.querySelectorAll('.intake-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.intake-option').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        intakePath = btn.dataset.path;
+        intakeAnswers = {};
+        renderIntakeStep2(intakePath);
+      });
+    });
+  }
+
+  function renderIntakeStep2(path) {
+    const step1 = document.getElementById('intake-step-1');
+    const step2 = document.getElementById('intake-step-2');
+    const resultBox = document.getElementById('intake-result');
+
+    step1.classList.remove('active');
+    resultBox.style.display = 'none';
+    resultBox.innerHTML = '';
+
+    let html = '<button class="intake-back" id="intake-back-btn">&larr; BACK</button>';
+
+    if (path === 'family') {
+      html += questionBlock('relationship', 'RELATIONSHIP TO SPONSOR', [
+        ['spouse', 'SPOUSE'], ['parent', 'PARENT'], ['child', 'CHILD'], ['sibling', 'SIBLING']
+      ]);
+      html += questionBlock('inside', 'BENEFICIARY CURRENTLY INSIDE U.S.?', [
+        ['yes', 'YES'], ['no', 'NO']
+      ]);
+      html += questionBlock('workpermit', 'WORK PERMIT NEEDED WHILE PENDING?', [
+        ['yes', 'YES'], ['no', 'NO']
+      ]);
+    } else if (path === 'work') {
+      html += questionBlock('eadtype', 'EAD FILING TYPE', [
+        ['initial', 'FIRST-TIME EAD'], ['renewal', 'RENEWAL EAD']
+      ]);
+      html += questionBlock('sponsor', 'EMPLOYER SPONSORING A PETITION?', [
+        ['yes', 'YES — FILE I-140'], ['no', 'NO — EAD ONLY']
+      ]);
+    } else if (path === 'citizen') {
+      html += questionBlock('cittype', 'FILING TYPE', [
+        ['naturalize', 'NATURALIZATION (N-400)'],
+        ['certificate', 'CERT. OF CITIZENSHIP (N-600)'],
+        ['replace', 'REPLACE GREEN CARD (I-90)']
+      ]);
+    } else if (path === 'court') {
+      html += questionBlock('courttype', 'MATTER TYPE', [
+        ['appeal', 'APPEAL TO BIA'], ['motion', 'MOTION TO REOPEN/RECONSIDER']
+      ]);
+    }
+
+    html += '<button class="intake-build-btn" id="intake-build-btn">BUILD MANIFEST</button>';
+
+    step2.innerHTML = html;
+    step2.classList.add('active');
+
+    document.getElementById('intake-back-btn').addEventListener('click', () => {
+      step2.classList.remove('active');
+      step2.innerHTML = '';
+      step1.classList.add('active');
+      document.querySelectorAll('.intake-option').forEach(b => b.classList.remove('selected'));
+    });
+
+    step2.querySelectorAll('.intake-pill').forEach(p => {
+      p.addEventListener('click', () => {
+        const group = p.dataset.group;
+        step2.querySelectorAll('.intake-pill[data-group="' + group + '"]').forEach(o => o.classList.remove('selected'));
+        p.classList.add('selected');
+        intakeAnswers[group] = p.dataset.value;
+      });
+    });
+
+    document.getElementById('intake-build-btn').addEventListener('click', () => buildIntakeManifest(path));
+  }
+
+  function questionBlock(group, label, options) {
+    let html = '<div class="intake-question-block">';
+    html += '<div class="intake-question-label">' + label + '</div>';
+    html += '<div class="intake-pill-row">';
+    options.forEach(([value, text]) => {
+      html += '<button type="button" class="intake-pill" data-group="' + group + '" data-value="' + value + '">' + text + '</button>';
+    });
+    html += '</div></div>';
+    return html;
+  }
+
+  function buildIntakeManifest(path) {
+    const suggestions = [];
+
+    if (path === 'family') {
+      const f130 = lookupForm('A', 'I-130');
+      if (f130) suggestions.push(f130);
+
+      if (intakeAnswers.inside === 'yes') {
+        const f485 = lookupForm('A', 'I-485');
+        if (f485) suggestions.push(f485);
+      } else {
+        const ds260 = lookupForm('A', 'DS-260');
+        if (ds260) suggestions.push(ds260);
+      }
+
+      const f864 = lookupForm('A', 'I-864');
+      if (f864) suggestions.push(f864);
+
+      if (intakeAnswers.workpermit === 'yes' && intakeAnswers.inside === 'yes') {
+        const c9 = lookupForm('C', '(c)(9)');
+        if (c9) suggestions.push(c9);
+      }
+    }
+
+    if (path === 'work') {
+      if (intakeAnswers.sponsor === 'yes') {
+        const f140 = lookupForm('B', 'I-140');
+        if (f140) suggestions.push(f140);
+      }
+      if (intakeAnswers.eadtype === 'renewal') {
+        const std = lookupForm('C', 'Standard / Other');
+        if (std) suggestions.push({ ...std, form: 'I-765 (renewal)' });
+      } else {
+        const std = lookupForm('C', 'Standard / Other');
+        if (std) suggestions.push({ ...std, form: 'I-765 (initial)' });
+      }
+    }
+
+    if (path === 'citizen') {
+      if (intakeAnswers.cittype === 'naturalize') {
+        const n400 = lookupForm('D', 'N-400');
+        if (n400) suggestions.push(n400);
+      } else if (intakeAnswers.cittype === 'certificate') {
+        const n600 = lookupForm('D', 'N-600');
+        if (n600) suggestions.push(n600);
+      } else if (intakeAnswers.cittype === 'replace') {
+        const i90 = lookupForm('D', 'I-90');
+        if (i90) suggestions.push(i90);
+      }
+    }
+
+    if (path === 'court') {
+      if (intakeAnswers.courttype === 'appeal') {
+        const eoir26 = lookupForm('E', 'EOIR-26');
+        if (eoir26) suggestions.push(eoir26);
+      } else if (intakeAnswers.courttype === 'motion') {
+        const motion = lookupForm('E', 'Motion (IJ)');
+        if (motion) suggestions.push(motion);
+      }
+    }
+
+    renderIntakeResult(suggestions);
+  }
+
+  function renderIntakeResult(suggestions) {
+    const resultBox = document.getElementById('intake-result');
+
+    if (suggestions.length === 0) {
+      resultBox.innerHTML = '<div class="intake-result-note">NO MATCHING FORMS FOUND FOR THESE ANSWERS — TRY BROWSE GATES INSTEAD.</div>';
+      resultBox.style.display = 'block';
+      return;
+    }
+
+    let html = '<div class="intake-result-title">SUGGESTED MANIFEST — REVIEW BEFORE CONFIRMING</div>';
+
+    suggestions.forEach((item, i) => {
+      const feeDisplay = item.fee === 0 ? 'FREE' : '$' + item.fee.toLocaleString();
+      html += `
+        <div class="intake-result-item">
+          <span>
+            <span class="intake-result-item-name">${escHtml(item.form)}</span>
+            <span class="intake-result-item-desc">${escHtml(item.description)}</span>
+          </span>
+          <span class="intake-result-item-fee">${feeDisplay}</span>
+        </div>
+      `;
+    });
+
+    html += '<button class="intake-build-btn" id="intake-confirm-btn" style="margin-top:16px;">ADD ALL TO MANIFEST</button>';
+    html += '<div class="intake-result-note">Each item lands in the manifest below — remove anything that does not apply before treating the total as final.</div>';
+
+    resultBox.innerHTML = html;
+    resultBox.style.display = 'block';
+
+    document.getElementById('intake-confirm-btn').addEventListener('click', () => {
+      suggestions.forEach(item => addToManifest(item));
+      document.getElementById('intake-confirm-btn').textContent = '✓ ADDED TO MANIFEST';
+      document.getElementById('intake-confirm-btn').disabled = true;
+    });
+  }
+
+  function initModeToggle() {
+    const modeButtons = document.querySelectorAll('.mode-btn');
+    const gateNav = document.getElementById('gate-nav');
+    const boardWrap = document.getElementById('board-wrap');
+    const intakeWrap = document.getElementById('intake-wrap');
+
+    modeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        modeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const mode = btn.dataset.mode;
+
+        if (mode === 'browse') {
+          gateNav.style.display = '';
+          boardWrap.style.display = '';
+          intakeWrap.style.display = 'none';
+        } else {
+          gateNav.style.display = 'none';
+          boardWrap.style.display = 'none';
+          intakeWrap.style.display = 'block';
+        }
+      });
+    });
   }
 
   // ── Gate tab switching ─────────────────────────────────────
@@ -460,68 +769,6 @@
       ]
     },
     "E": {
-      "label": "State & Attorney Costs",
-      "icon": "◎",
-      "forms": [
-        {
-          "form": "ATT-FAM",
-          "description": "Family-Based Immigration Attorney (avg)",
-          "fee": 1500,
-          "biometrics": 0,
-          "status": "ESTIMATE",
-          "notes": "Range: $1,000–$3,500 depending on complexity"
-        },
-        {
-          "form": "ATT-EMP",
-          "description": "Employment-Based Immigration Attorney (avg)",
-          "fee": 2500,
-          "biometrics": 0,
-          "status": "ESTIMATE",
-          "notes": "Range: $1,500–$5,000+"
-        },
-        {
-          "form": "ATT-NAT",
-          "description": "Naturalization Attorney (avg)",
-          "fee": 800,
-          "biometrics": 0,
-          "status": "ESTIMATE",
-          "notes": "Range: $500–$1,500"
-        },
-        {
-          "form": "ATT-EOIR",
-          "description": "Immigration Court / Removal Defense Attorney (avg)",
-          "fee": 4000,
-          "biometrics": 0,
-          "status": "ESTIMATE",
-          "notes": "Range: $2,000–$10,000+ depending on case complexity"
-        },
-        {
-          "form": "TX-STATE",
-          "description": "Texas — State Filing / Notary Costs (avg)",
-          "fee": 45,
-          "biometrics": 0,
-          "status": "ESTIMATE",
-          "notes": "Translation, notarization, certified copies"
-        },
-        {
-          "form": "OK-STATE",
-          "description": "Oklahoma — State Filing / Notary Costs (avg)",
-          "fee": 40,
-          "biometrics": 0,
-          "status": "ESTIMATE",
-          "notes": "Translation, notarization, certified copies"
-        },
-        {
-          "form": "CA-STATE",
-          "description": "California — State Filing / Notary Costs (avg)",
-          "fee": 65,
-          "biometrics": 0,
-          "status": "ESTIMATE",
-          "notes": "Higher cost of living reflects in legal service rates"
-        }
-      ]
-    },
-    "F": {
       "label": "EOIR — Immigration Court",
       "icon": "⚖",
       "forms": [
@@ -597,6 +844,10 @@
   // ── Init ───────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
     initGateTabs();
+    initManifestControls();
+    initIntake();
+    initModeToggle();
+    renderManifest();
     loadFees();
   });
 
