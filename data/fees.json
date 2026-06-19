@@ -59,19 +59,6 @@
       ]
     },
     "E": {
-      "label": "State & Attorney Costs",
-      "icon": "◎",
-      "forms": [
-        { "form": "ATT-FAM", "description": "Family-Based Immigration Attorney (avg)", "fee": 1500, "biometrics": 0, "status": "ESTIMATE", "notes": "Range: $1,000–$3,500 depending on complexity" },
-        { "form": "ATT-EMP", "description": "Employment-Based Immigration Attorney (avg)", "fee": 2500, "biometrics": 0, "status": "ESTIMATE", "notes": "Range: $1,500–$5,000+" },
-        { "form": "ATT-NAT", "description": "Naturalization Attorney (avg)", "fee": 800, "biometrics": 0, "status": "ESTIMATE", "notes": "Range: $500–$1,500" },
-        { "form": "ATT-EOIR", "description": "Immigration Court / Removal Defense Attorney (avg)", "fee": 4000, "biometrics": 0, "status": "ESTIMATE", "notes": "Range: $2,000–$10,000+ depending on case complexity" },
-        { "form": "TX-STATE", "description": "Texas — State Filing / Notary Costs (avg)", "fee": 45, "biometrics": 0, "status": "ESTIMATE", "notes": "Translation, notarization, certified copies" },
-        { "form": "OK-STATE", "description": "Oklahoma — State Filing / Notary Costs (avg)", "fee": 40, "biometrics": 0, "status": "ESTIMATE", "notes": "Translation, notarization, certified copies" },
-        { "form": "CA-STATE", "description": "California — State Filing / Notary Costs (avg)", "fee": 65, "biometrics": 0, "status": "ESTIMATE", "notes": "Higher cost of living reflects in legal service rates" }
-      ]
-    },
-    "F": {
       "label": "EOIR — Immigration Court",
       "icon": "⚖",
       "forms": [
