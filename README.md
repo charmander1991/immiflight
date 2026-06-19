@@ -2,7 +2,7 @@
 
 **U.S. Immigration Fee Departures Board**
 
-A retro airport-style departure board that displays current USCIS filing fees, biometrics costs, state fees, and attorney estimates. Auto-updates weekly via GitHub Actions.
+A retro airport-style departure board for immigration attorneys, displaying current USCIS and EOIR filing fees with a built-in case manifest builder. Auto-updates weekly via GitHub Actions.
 
 > *"Know before you go."*
 
@@ -17,7 +17,9 @@ Deployed at: `https://[your-username].github.io/immiflight`
 ## Features
 
 - 🖥 Full airport flip-board UI — amber-on-black, VT323 font, flip animations
-- 4 Gates: Family · Employment · Citizenship · State & Attorney
+- 5 Gates: Family · Employment · I-765 by Category · Citizenship · EOIR Court
+- Case Intake mode — answer a few questions, get a suggested manifest to review and confirm
+- Passenger Manifest — running case total across any combination of fees, browse or intake-built
 - Live clock + last-updated timestamp
 - Auto-scrolling notice ticker
 - Per-gate fee totals
@@ -82,8 +84,11 @@ Set `"status": "UPDATED"` on any changed row and it will highlight on the board.
 
 | Gate | Source |
 |------|--------|
-| A–C  | [USCIS Filing Fees](https://www.uscis.gov/forms/filing-fees) |
-| D    | Attorney cost estimates (manually curated) |
+| A, B, D | [USCIS Filing Fees](https://www.uscis.gov/forms/filing-fees) |
+| C | [USCIS Form I-765 Instructions](https://www.uscis.gov/i-765) + [G-1055 Fee Schedule](https://www.uscis.gov/g-1055) — manually curated by category |
+| E | [EOIR Forms & Fees](https://www.justice.gov/eoir/eoir-forms), [EOIR Filing Fees](https://www.justice.gov/eoir/types-appeals-motions-and-required-fees) — FY2026 OBBBA inflation-adjusted rates |
+
+> **Note on Gate C (I-765) and Gate E (EOIR):** These are updated manually, not by the automated scraper. I-765 fees vary by eligibility category and change with HR-1/OBBBA statutory adjustments; EOIR fees adjust annually for inflation each February. Re-verify both against current USCIS/DOJ notices periodically.
 
 > **Disclaimer:** Fees are subject to change. Always verify on [uscis.gov](https://www.uscis.gov) before filing. This tool is for informational purposes only and does not constitute legal advice.
 
