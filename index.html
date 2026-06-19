@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ImmiFlight — U.S. Immigration Fee Board</title>
+  <title>ImmiFlight — Immigration Filing Fee Manifest</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
@@ -32,18 +32,80 @@
     </div>
   </header>
 
+  <!-- MODE TOGGLE -->
+  <div class="mode-toggle">
+    <button class="mode-btn active" data-mode="browse">BROWSE GATES</button>
+    <button class="mode-btn" data-mode="intake">CASE INTAKE</button>
+  </div>
+
   <!-- GATE TABS -->
-  <nav class="gate-nav">
+  <nav class="gate-nav" id="gate-nav">
     <button class="gate-tab active" data-gate="A">GATE A · FAMILY</button>
     <button class="gate-tab" data-gate="B">GATE B · EMPLOYMENT</button>
     <button class="gate-tab" data-gate="C">GATE C · I-765 BY CATEGORY</button>
     <button class="gate-tab" data-gate="D">GATE D · CITIZENSHIP</button>
-    <button class="gate-tab" data-gate="E">GATE E · STATE & ATTORNEY</button>
-    <button class="gate-tab" data-gate="F">GATE F · EOIR COURT</button>
+    <button class="gate-tab" data-gate="E">GATE E · EOIR COURT</button>
   </nav>
 
+  <!-- INTAKE PANEL -->
+  <section class="intake-wrap" id="intake-wrap" style="display:none;">
+    <div class="intake-step active" id="intake-step-1">
+      <div class="intake-prompt">WHAT IS THE NATURE OF THIS FILING?</div>
+      <div class="intake-options">
+        <button class="intake-option" data-path="family">
+          <span class="intake-option-code">A</span>
+          <span class="intake-option-text">FAMILY-BASED PETITION</span>
+        </button>
+        <button class="intake-option" data-path="work">
+          <span class="intake-option-code">B</span>
+          <span class="intake-option-text">WORK / EMPLOYMENT AUTHORIZATION</span>
+        </button>
+        <button class="intake-option" data-path="citizen">
+          <span class="intake-option-code">D</span>
+          <span class="intake-option-text">CITIZENSHIP / STATUS</span>
+        </button>
+        <button class="intake-option" data-path="court">
+          <span class="intake-option-code">F</span>
+          <span class="intake-option-text">IMMIGRATION COURT MATTER</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="intake-step" id="intake-step-2"></div>
+
+    <div class="intake-result" id="intake-result" style="display:none;"></div>
+  </section>
+
+  <!-- CASE MANIFEST -->
+  <section class="manifest-wrap" id="manifest-wrap">
+    <div class="manifest-header">
+      <div class="manifest-title-block">
+        <span class="manifest-label">PASSENGER MANIFEST</span>
+        <input type="text" id="manifest-client" class="manifest-client-input" placeholder="CLIENT / MATTER NO." />
+      </div>
+      <button class="manifest-clear" id="manifest-clear">CLEAR MANIFEST</button>
+    </div>
+    <div class="manifest-items" id="manifest-items">
+      <div class="manifest-empty">NO ITEMS BOARDED — SELECT + ON ANY ROW BELOW</div>
+    </div>
+    <div class="manifest-totals">
+      <div class="manifest-total-line">
+        <span>FILING FEES</span>
+        <span id="manifest-sum-filing">$0</span>
+      </div>
+      <div class="manifest-total-line">
+        <span>BIOMETRICS</span>
+        <span id="manifest-sum-bio">$0</span>
+      </div>
+      <div class="manifest-total-line grand">
+        <span>TOTAL DUE</span>
+        <span id="manifest-sum-total">$0</span>
+      </div>
+    </div>
+  </section>
+
   <!-- BOARD CONTAINER -->
-  <main class="board-wrap">
+  <main class="board-wrap" id="board-wrap">
 
     <!-- COLUMN HEADERS -->
     <div class="board-headers">
@@ -53,6 +115,7 @@
       <div class="col-bio">BIOMETRICS</div>
       <div class="col-status">STATUS</div>
       <div class="col-notes">NOTES</div>
+      <div class="col-add">ADD</div>
     </div>
 
     <!-- ROWS -->
@@ -69,9 +132,9 @@
       <div class="ticker-content" id="ticker-text">
         FEES ARE SUBJECT TO CHANGE WITHOUT NOTICE &nbsp;·&nbsp;
         ALWAYS VERIFY ON USCIS.GOV BEFORE FILING &nbsp;·&nbsp;
-        I-765 AND EOIR FEES VARY BY CATEGORY — CONFIRM YOUR SPECIFIC SITUATION &nbsp;·&nbsp;
-        ATTORNEY COSTS ARE ESTIMATES ONLY &nbsp;·&nbsp;
-        FEE WAIVERS MAY BE AVAILABLE — CONSULT AN IMMIGRATION ATTORNEY &nbsp;·&nbsp;
+        I-765 AND EOIR FEES VARY BY CATEGORY — CONFIRM FILING DATE AND ELIGIBILITY &nbsp;·&nbsp;
+        GATE E COSTS ARE FIRM ESTIMATES, NOT GOVERNMENT FEES &nbsp;·&nbsp;
+        ADD LINE ITEMS TO THE MANIFEST TO BUILD A CASE TOTAL &nbsp;·&nbsp;
         DATA AUTO-REFRESHED WEEKLY VIA GITHUB ACTIONS &nbsp;·&nbsp;
       </div>
     </div>
@@ -80,3 +143,4 @@
   <script src="app.js"></script>
 </body>
 </html>
+
